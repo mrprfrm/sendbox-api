@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "sendbox-api"
+version = "0.1.0"
+description = ""
+authors = ["Anton Petrov <marblemonolit@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = "^0.75.0"
+aioredis = "^2.0.1"
+uvicorn = {extras = ["standard"], version = "^0.17.6"}
+
+[tool.poetry.dev-dependencies]
+ipdb = "^0.13.9"
+pytest = "^7.0.1"
+pytest-cov = "^3.0.0"
+pytest-asyncio = "^0.18.2"
+httpx = "^0.22.0"
+black = "^22.1.0"
+isort = "^5.10.1"
+flake8 = "^4.0.1"
+ipython = "^8.1.1"
+Fabric3 = "^1.14.post1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
