@@ -36,7 +36,7 @@ class WebsocketManager:
         await ws.accept()
         self._connections.append(ws)
         user_hash = hash(datetime.now().timestamp())
-        return User(username=f'User-{user_hash}')
+        return User(username=f"User-{user_hash}")
 
     async def send(self, user: User, content: str):
         message = Message(content=content, user=user)
@@ -52,7 +52,7 @@ app = FastAPI()
 manager = WebsocketManager()
 
 
-@app.websocket('/messages')
+@app.websocket("/messages")
 async def messages_hadler(websocket: WebSocket):
     user = await manager.connect(websocket)
     try:
