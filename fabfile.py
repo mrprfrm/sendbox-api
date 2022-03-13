@@ -2,7 +2,7 @@ from fabric.api import local
 
 
 def run():
-    local("poetry run uvicorn app/main:app --port 8000 --reload")
+    local("poetry run uvicorn app.main:app --port 8000 --reload")
 
 
 def lint(path="."):
