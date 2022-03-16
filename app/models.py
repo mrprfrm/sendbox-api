@@ -1,3 +1,4 @@
+import enum
 import uuid
 from datetime import datetime
 
@@ -32,7 +33,19 @@ class Message(pydantic.BaseModel):
     body: str = pydantic.Field(...)
     user: User = pydantic.Field(default_factory=default_user)
     publicated_at: datetime = pydantic.Field(default_factory=datetime.utcnow)
+    updated_at: datetime = None
 
     class Config:
         alias_generator = to_camel_case
         allow_population_by_field_name = True
+
+
+class ActionType(enum.IntEnum):
+    CREATE = 0
+    UPDATE = 1
+    DELETE = 2
+
+
+class Action(pydantic.BaseModel):
+    action_type: ActionType
+    message: Message

@@ -9,6 +9,7 @@ python = "^3.9"
 fastapi = "^0.75.0"
 aioredis = "^2.0.1"
 uvicorn = {extras = ["standard"], version = "^0.17.6"}
+motor = "^2.5.1"
 
 [tool.poetry.dev-dependencies]
 ipdb = "^0.13.9"
@@ -21,6 +22,7 @@ isort = "^5.10.1"
 flake8 = "^4.0.1"
 ipython = "^8.1.1"
 Fabric3 = "^1.14.post1"
+Faker = "^13.3.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
