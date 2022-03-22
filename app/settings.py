@@ -6,3 +6,4 @@ class AppSettings(BaseSettings):
     db_url: str = "mongodb://localhost:27017"
     db_name: str = "default"
     per_request_docs_limit = 50
+    origins: list = ["*"]

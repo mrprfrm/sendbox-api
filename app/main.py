@@ -5,6 +5,7 @@ import pydantic
 from aioredis import Redis, from_url
 from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
+from starlette.middleware.cors import CORSMiddleware
 
 from .models import Action, ActionType, Message
 from .settings import AppSettings
@@ -26,6 +27,14 @@ async def get_db():
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class MessagesCollection(pydantic.BaseModel):
     has_next: bool = False
@@ -37,7 +46,7 @@ async def list_messages(offset: int = 0, db: AsyncIOMotorDatabase = Depends(get_
     cursor = db.messages.find({})
     if offset and offset > 0:
         cursor.skip(offset)
-    cursor.limit(settings.per_request_docs_limit)
+    cursor.limit(settings.per_request_docs_limit).sort("publicated_at", -1)
     count = await db.messages.count_documents({})
 
     messages = [Message(**doc) async for doc in cursor]
@@ -102,14 +111,16 @@ async def delete_message(
 
 @app.websocket("/messages")
 async def messages_hadler(websocket: WebSocket, redis: Redis = Depends(get_redis)):
-    await websocket.accept()
-    pubsub = redis.pubsub()
-    await pubsub.subscribe("messages")
-    try:
-        while True:
-            if message := await pubsub.get_message():
-                data = message.get("data", "")
-                if data and isinstance(data, bytes):
-                    await websocket.send_text(data.decode())
-    except WebSocketDisconnect:
-        pass
+    async with redis.pubsub() as pubsub:
+        await websocket.accept()
+        await pubsub.subscribe("messages")
+        try:
+            while True:
+                # TODO add handler for presence message
+                await websocket.receive_text()
+                if message := await pubsub.get_message(ignore_subscribe_messages=True):
+                    data = message.get("data", "")
+                    if data and isinstance(data, bytes):
+                        await websocket.send_text(data.decode())
+        except WebSocketDisconnect:
+            await pubsub.unsubscribe("messages")
