@@ -2,7 +2,9 @@ from fabric.api import local
 
 
 def run():
-    local("export DB_NAME=default;  poetry run uvicorn app.main:app --port 8000 --reload")
+    local(
+        "export DB_NAME=default;  poetry run uvicorn app.main:app --port 8000 --reload"
+    )
 
 
 def lint(path="."):
