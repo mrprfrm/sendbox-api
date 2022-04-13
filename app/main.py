@@ -7,7 +7,7 @@ from fastapi import Depends, FastAPI, WebSocket, WebSocketDisconnect
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
 from starlette.middleware.cors import CORSMiddleware
 
-from .models import Action, ActionType, Message
+from .models import Action, ActionType, Message, to_camel_case
 from .settings import AppSettings
 
 settings = AppSettings()
@@ -39,6 +39,10 @@ app.add_middleware(
 class MessagesCollection(pydantic.BaseModel):
     has_next: bool = False
     messages: List[Message] = []
+
+    class Config:
+        alias_generator = to_camel_case
+        allow_population_by_field_name = True
 
 
 @app.get("/messages", response_model=MessagesCollection)
